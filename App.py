@@ -10,31 +10,37 @@ URL = "https://api.groq.com/openai/v1/chat/completions"
 
 @app.route('/')
 def index():
+    # Home page jekhane apnar details r button thakbe
     return render_template('index.html')
 
-@app.route('/ai-chat')
-def ai_page():
-    # Chat korar jonno alada page (Ata niche banaye dichi)
+@app.route('/chat')
+def chat_page():
+    # Chatbot er alada page (anondo.bro.bd/chat)
     return render_template('chat.html')
 
 @app.route('/chat_api', methods=['POST'])
 def chat_api():
     user_message = request.json.get("message", "")
+    
     payload = {
         "model": "llama-3.3-70b-versatile",
         "messages": [
-            {"role": "system", "content": "You are Turmax AI, Anondo's friend. Speak in Banglish."},
+            {"role": "system", "content": "You are Turmax AI, Anondo's friend. Speak in Banglish (Bengali using English letters)."},
             {"role": "user", "content": user_message}
         ],
         "temperature": 0.7
     }
-    headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
+    
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
     
     try:
-        response = requests.post(URL, headers=headers, json=payload)
+        response = requests.post(URL, headers=headers, json=payload, timeout=10)
         bot_reply = response.json()["choices"][0]["message"]["content"]
     except:
-        bot_reply = "Dost, API te jhamela hosse!"
+        bot_reply = "Dost, server e ektu jhamela hosse. Pore try koro!"
         
     return jsonify({"response": bot_reply})
 
