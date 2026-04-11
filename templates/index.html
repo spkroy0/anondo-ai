@@ -3,51 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anondo's Digital Hub</title>
+    <title>Anondo Kumar Roy | Personal Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .hub-container { text-align: center; padding: 20px; width: 90%; max-width: 500px; }
-        h1 { font-size: 2.5rem; margin-bottom: 10px; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        p { color: #94a3b8; margin-bottom: 30px; }
-        
-        .menu-grid { display: grid; gap: 20px; }
-        .menu-item { 
-            background: #1e293b; padding: 20px; border-radius: 15px; text-decoration: none; color: white;
-            transition: transform 0.3s, background 0.3s; border: 1px solid #334155; display: flex; align-items: center; justify-content: space-between;
-        }
-        .menu-item:hover { transform: translateY(-5px); background: #334155; border-color: #38bdf8; }
-        .icon { font-size: 24px; }
-        .text-group { text-align: left; }
-        .title { display: block; font-weight: bold; font-size: 18px; }
-        .desc { font-size: 12px; color: #94a3b8; }
+        body { font-family: 'Poppins', sans-serif; background: #0b0f19; color: white; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: #161b29; padding: 40px; border-radius: 30px; width: 100%; max-width: 420px; text-align: center; border: 1px solid #1e293b; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+        .profile-img { width: 130px; height: 130px; border-radius: 50%; border: 4px solid #38bdf8; padding: 5px; margin-bottom: 15px; transition: 0.4s; object-fit: cover; }
+        .profile-img:hover { transform: rotate(5deg) scale(1.05); }
+        h1 { font-size: 24px; color: #38bdf8; margin: 10px 0; }
+        .bio { font-size: 14px; color: #94a3b8; margin-bottom: 25px; line-height: 1.5; }
+        .info-box { background: #0b0f19; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: left; border: 1px solid #1e293b; }
+        .info-item { font-size: 13px; color: #cbd5e1; margin: 8px 0; }
+        .info-item b { color: #38bdf8; }
+        .links-group { display: flex; flex-direction: column; gap: 12px; }
+        .link-btn { padding: 12px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; color: white; border: none; }
+        .btn-fb { background: #1877f2; }
+        .btn-ig { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .btn-web { background: #21759b; }
+        .link-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        hr { border: 0; border-top: 1px solid #1e293b; margin: 25px 0; }
+        .dl-section h3 { font-size: 18px; color: #38bdf8; margin-bottom: 15px; }
+        input, select, .dl-btn { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #1e293b; background: #0b0f19; color: white; box-sizing: border-box; }
+        .dl-btn { background: #38bdf8; color: #0b0f19; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
     </style>
 </head>
 <body>
-    <div class="hub-container">
-        <h1>Anondo Kumar Roy</h1>
-        <p>Welcome to my personal AI & Tool hub.</p>
+    <div class="container">
+        <img src="{{ url_for('static', filename='spkroy.jpg') }}" alt="Anondo Roy" class="profile-img">
         
-        <div class="menu-grid">
-            <a href="/chat" class="menu-item">
-                <div class="text-group">
-                    <span class="title">🤖 Anondo AI Chat</span>
-                    <span class="desc">Talk with my personalized AI assistant</span>
-                </div>
-                <span class="icon">➜</span>
-            </a>
+        <h1>Anondo Kumar Roy</h1>
+        <p class="bio">AI Enthusiast | Android Developer | Tech Innovator<br>Student of HSC '25</p>
 
-            <a href="https://download.anondo.bro.bd" class="menu-item">
-                <div class="text-group">
-                    <span class="title">📥 Social Downloader</span>
-                    <span class="desc">Download HD videos & music</span>
-                </div>
-                <span class="icon">➜</span>
-            </a>
+        <div class="info-box">
+            <div class="info-item">📧 <b>Email:</b> spkroy2006@gmail.com</div>
+            <div class="info-item">🌐 <b>Portfolio:</b> kabbokotha1.wordpress.com</div>
         </div>
 
-        <div style="margin-top: 40px; font-size: 12px; color: #475569;">
-            © 2026 Anondo Roy | All Rights Reserved
+        <div class="links-group">
+            <a href="https://kabbokotha1.wordpress.com" target="_blank" class="link-btn btn-web">🌐 Official Website</a>
+            <a href="https://www.facebook.com/share/1GizP15S3H/" target="_blank" class="link-btn btn-fb">📘 Facebook Profile</a>
+            <a href="https://www.instagram.com/spk.roy.01?igsh=MXEzcTRiOHVhM2cyYg==" target="_blank" class="link-btn btn-ig">📸 Instagram</a>
         </div>
+
+        <hr>
+
+        <div class="dl-section">
+            <h3>📥 Video Downloader</h3>
+            <form action="/download" method="POST">
+                <input type="text" name="url" placeholder="Paste link (YT, FB, Insta...)" required>
+                <select name="format_type">
+                    <option value="720">720p Video</option>
+                    <option value="360">360p Video</option>
+                    <option value="320k">MP3 Audio (320kbps)</option>
+                </select>
+                <button type="submit" class="dl-btn">Download Now</button>
+            </form>
+        </div>
+
+        <p style="font-size: 10px; color: #475569; margin-top: 20px;">DESIGNED BY ANONDO • 2026</p>
     </div>
 </body>
 </html>
