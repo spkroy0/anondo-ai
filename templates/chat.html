@@ -3,62 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Turmax AI Chat</title>
+    <title>Turmax AI | Chat</title>
     <style>
         body { font-family: sans-serif; background: #0b1120; color: white; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .chat-card { width: 100%; max-width: 400px; background: #1e293b; padding: 20px; border-radius: 20px; }
-        #box { height: 300px; overflow-y: auto; background: #0f172a; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #334155; font-size: 14px; }
-        .input-group { display: flex; gap: 5px; }
-        input { flex: 1; padding: 12px; border-radius: 10px; border: none; background: #0f172a; color: white; }
+        .chat-container { width: 100%; max-width: 450px; background: #1e293b; padding: 20px; border-radius: 20px; }
+        #chat-box { height: 350px; overflow-y: auto; background: #0f172a; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #334155; }
+        .input-area { display: flex; gap: 8px; }
+        input { flex: 1; padding: 12px; border-radius: 10px; border: none; background: #0f172a; color: white; outline: none; }
         button { background: #38bdf8; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="chat-card">
-        <h2 style="color: #38bdf8; text-align: center;">🤖 Turmax AI</h2>
-        <div id="box"><div>AI: Ki obostha Anondo? Ki help lagbe?</div></div>
-        <div class="input-group">
-            <input type="text" id="msg" placeholder="Banglish e likho...">
+    <div class="chat-container">
+        <h2 style="color:#38bdf8; text-align:center;">🤖 Turmax AI</h2>
+        <div id="chat-box"><div>AI: Ki obostha Anondo? Bolo ki help korbo.</div></div>
+        <div class="input-area">
+            <input type="text" id="user-msg" placeholder="Banglish e kotha bolo...">
             <button onclick="send()">Send</button>
         </div>
-        <br><a href="/" style="color: #94a3b8; text-decoration: none; font-size: 12px;">← Back to Home</a>
+        <br><center><a href="/" style="color:#94a3b8; text-decoration:none; font-size:13px;">← Back to Home</a></center>
     </div>
-
     <script>
         async function send() {
-            const i = document.getElementById('msg');
-            const b = document.getElementById('box');
-            if(!i.value) return;
-            b.innerHTML += `<div style="margin-top:10px;">You: ${i.value}</div>`;
-            const m = i.value; i.value = '';
+            const input = document.getElementById('user-msg');
+            const box = document.getElementById('chat-box');
+            if(!input.value) return;
+            box.innerHTML += `<div style="margin-top:10px;">You: ${input.value}</div>`;
+            const msg = input.value; input.value = '';
             const res = await fetch('/chat_api', {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({message: m})
+                body: JSON.stringify({message: msg})
             });
-            const d = await res.json();
-            b.innerHTML += `<div style="color:#38bdf8; margin-top:5px;">AI: ${d.response}</div>`;
-            b.scrollTop = b.scrollHeight;
-        }
-    </script>
-</body>
-</html>
-                
-                // Hide typing indicator and display AI response
-                typingIndicator.style.display = 'none';
-                appendMessage('ai-message', data.reply);
-
-            } catch (error) {
-                typingIndicator.style.display = 'none';
-                appendMessage('ai-message', 'Error: Connect korte parchi na. Network check koro.');
-            }
-        }
-
-        function appendMessage(className, text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${className}`;
-            msgDiv.innerText = text;
-            chatContainer.appendChild(msgDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            const data = await res.json();
+            box.innerHTML += `<div style="color:#38bdf8; margin-top:8px;">AI: ${data.response}</div>`;
+            box.scrollTop = box.scrollHeight;
         }
     </script>
 </body>
