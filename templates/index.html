@@ -8,41 +8,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background: #0b1120; color: white; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { background: #1e293b; padding: 35px 25px; border-radius: 30px; width: 100%; max-width: 380px; text-align: center; border: 1px solid #334155; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+        .card { background: #1e293b; padding: 40px 30px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
         
-        /* ছবি গোল এবং সঠিক সাইজ করার জন্য */
-        .profile-img { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #38bdf8; padding: 3px; object-fit: cover; margin-bottom: 15px; background: #0f172a; }
+        /* ছবি বা অবতারের জন্য স্টাইল */
+        .profile-img { width: 120px; height: 120px; border-radius: 50%; border: 4px solid #38bdf8; padding: 3px; object-fit: cover; margin-bottom: 15px; background: #0f172a; }
         
-        h1 { font-size: 22px; color: #38bdf8; margin: 5px 0; }
-        .bio { font-size: 13px; color: #94a3b8; margin-bottom: 20px; line-height: 1.4; }
+        h1 { font-size: 24px; color: #38bdf8; margin: 10px 0; }
+        .bio { font-size: 14px; color: #94a3b8; margin-bottom: 25px; line-height: 1.5; }
 
-        .social-icons { display: flex; justify-content: center; gap: 20px; margin-bottom: 25px; }
-        .social-icons a { color: #94a3b8; font-size: 24px; transition: 0.3s; }
+        /* সোশ্যাল আইকন সেকশন (গিটহাব যোগ করা হয়েছে) */
+        .social-icons { display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; }
+        .social-icons a { color: #94a3b8; font-size: 24px; transition: 0.3s; text-decoration: none; }
         .social-icons a:hover { color: #38bdf8; transform: translateY(-3px); }
 
-        .action-btns { display: flex; flex-direction: column; gap: 12px; }
-        .btn { padding: 14px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; border: none; cursor: pointer; }
+        /* মেইন বাটনস */
+        .action-btns { display: flex; flex-direction: column; gap: 15px; }
+        .btn { padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; border: none; cursor: pointer; }
         .btn-ai { background: #38bdf8; color: #0b1120; }
         .btn-dl { background: #10b981; color: white; }
         .btn:hover { transform: scale(1.02); opacity: 0.9; }
 
-        /* Footer Credit */
-        .footer-text { margin-top: 25px; font-size: 10px; color: #475569; text-transform: uppercase; letter-spacing: 1px; border-top: 1px solid #334155; padding-top: 15px; }
+        /* Footer Credit (Designed by Anondo) */
+        .footer-text { margin-top: 30px; font-size: 10px; color: #475569; text-transform: uppercase; letter-spacing: 1px; border-top: 1px solid #334155; padding-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <img src="{{ url_for('static', filename='spkroy.jpg') }}" alt="Anondo Roy" class="profile-img">
+    <img src="https://api.multiavatar.com/Anondo.svg" alt="Anondo Avatar" class="profile-img">
     
     <h1>Anondo Kumar Roy</h1>
     <p class="bio">AI Enthusiast | Android Developer | Tech Innovator<br>Student of HSC '25</p>
 
     <div class="social-icons">
-        <a href="https://www.facebook.com/share/1GizP15S3H/" target="_blank"><i class="fab fa-facebook"></i></a>
-        <a href="https://www.instagram.com/spk.roy.01" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="https://kabbokotha1.wordpress.com" target="_blank"><i class="fas fa-globe"></i></a>
-        <a href="mailto:spkroy2006@gmail.com"><i class="fas fa-envelope"></i></a>
+        <a href="https://www.facebook.com/share/1GizP15S3H/" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="https://www.instagram.com/spk.roy.01" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://github.com/spkroy0" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+        <a href="mailto:spkroy2006@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
     </div>
 
     <div class="action-btns">
