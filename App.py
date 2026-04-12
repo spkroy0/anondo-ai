@@ -53,6 +53,12 @@ def chat_api():
 def font_engine():
     return render_template('font.html')
 
+# --- পাইথন এডিটর রাউট (নতুন যোগ করা হলো) ---
+@app.route('/py-editor')
+def py_editor():
+    # এটি আপনার templates ফোল্ডারের editor.html ফাইলটিকে দেখাবে
+    return render_template('editor.html')
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
