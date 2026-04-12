@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anondo Python IDE - Live</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root { --bg: #0b1120; --panel: #1e293b; --accent: #38bdf8; --success: #10b981; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        .toolbar { background: var(--panel); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #334155; }
+        .logo { color: var(--accent); font-weight: bold; font-size: 18px; }
+        .status { font-size: 12px; color: #94a3b8; }
+
+        .workspace { display: flex; flex: 1; overflow: hidden; }
+        @media (max-width: 768px) { .workspace { flex-direction: column; } }
+        
+        #editor { flex: 1; font-size: 16px; border-right: 2px solid #334155; }
+        
+        .output-container { flex: 1; display: flex; flex-direction: column; background: #000; }
+        .output-header { background: #111827; padding: 10px; font-size: 14px; font-weight: bold; color: var(--accent); border-bottom: 1px solid #334155; }
+        #output { flex: 1; padding: 15px; font-family: 'Fira Code', 'Courier New', monospace; color: #00ff41; overflow-y: auto; white-space: pre-wrap; font-size: 15px; margin: 0; }
+        
+        .error-text { color: #ef4444; }
+
+        .run-btn { background: var(--success); color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .run-btn:hover { background: #059669; }
+    </style>
+</head>
+<body>
+
+<div class="toolbar">
+    <div class="logo"><i class="fab fa-python"></i> Anondo Python IDE <span style="font-size: 10px; color: #475569;">Live Edition</span></div>
+    <div class="status" id="status">Status: Ready</div>
+    <button class="run-btn" onclick="runCode()"><i class="fas fa-play"></i> RUN</button>
+</div>
+
+<div class="workspace">
+    <div id="editor"># Python Code Here
+# Real-time output enabled!
+
+def greet(name):
+    return f"Welcome, {name} to your own IDE!"
+
+print(greet("Anondo Kumar Roy"))
+
+for x in range(3):
+    print("Looping...", x)
+</div>
+
+    <div class="output-container">
+        <div class="output-header"><i class="fas fa-terminal"></i> Live Output Console</div>
+        <pre id="output"></pre>
+    </div>
+</div>
+
+<script>
+    // 1. Initialize Ace Editor
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/one_dark");
+    editor.session.setMode("ace/mode/python");
+    editor.setShowPrintMargin(false);
+
+    // 2. Skulpt Configuration
+    function outf(text) { 
+        var mypre = document.getElementById("output"); 
+        mypre.innerHTML = mypre.innerHTML + text; 
+    } 
+    function builtinRead(x) {
+        if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+            throw "File not found: '" + x + "'";
+        return Sk.builtinFiles["files"][x];
+    }
+
+    // 3. Main Run Function
+    function runCode() {
+        var code = editor.getValue();
+        var outputArea = document.getElementById("output");
+        var status = document.getElementById("status");
+        
+        outputArea.innerHTML = ''; 
+        status.innerHTML = "Status: Executing...";
+        status.style.color = "#fbbf24";
+
+        Sk.pre = "output";
+        Sk.configure({output:outf, read:builtinRead}); 
+        
+        var myPromise = Sk.misceval.asyncToPromise(function() {
+            return Sk.importMainWithBody("<stdin>", false, code, true);
+        });
+
+        myPromise.then(function(mod) {
+            status.innerHTML = "Status: Online & Success";
+            status.style.color = "#10b981";
+        }, function(err) {
+            outputArea.innerHTML = '<span class="error-text">' + err.toString() + '</span>';
+            status.innerHTML = "Status: Error Found";
+            status.style.color = "#ef4444";
+        });
+    }
+
+    // 4. Real-time Auto-run Logic
+    let timeout = null;
+    editor.getSession().on('change', function() {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            runCode();
+        }, 1000); // টাইপ করা থামানোর ১ সেকেন্ড পর অটো রান হবে
+    });
+
+    // Initial run when page loads
+    window.onload = runCode;
+</script>
+</body>
+</html>
