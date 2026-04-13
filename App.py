@@ -5,8 +5,7 @@ from flask import Flask, render_template, request, jsonify, session
 app = Flask(__name__, static_folder='static')
 app.secret_key = "anondo_secret_key_2026"
 
-# --- Groq API Configuration ---
-# Tumi ekhon matro je key-ta dile oita ekhane boshanu hoyeche
+# Matro dewa Groq Key (Try to keep it secret next time!)
 API_KEY = "Gsk_tOW44UqXqHS06hwLJoXeWGdyb3FYcHAd9R12GG3tgoK9etu8Y2Dq"
 URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -31,9 +30,8 @@ def chat_api():
     history = session['chat_history']
     history.append({"role": "user", "content": user_message})
 
-    # Groq er jonno payload
     payload = {
-        "model": "llama-3.3-70b-versatile", # Groq-er shera model
+        "model": "llama-3.3-70b-versatile",
         "messages": history,
         "temperature": 0.8,
         "max_tokens": 1024
@@ -51,7 +49,7 @@ def chat_api():
             bot_reply = response.json()["choices"][0]["message"]["content"]
             history.append({"role": "assistant", "content": bot_reply})
             
-            # History control (memory limit)
+            # History control
             if len(history) > 12:
                 session['chat_history'] = [history[0]] + history[-11:]
             else:
@@ -59,17 +57,21 @@ def chat_api():
             
             session.modified = True
             return jsonify({"response": bot_reply})
+        
+        elif response.status_code == 401:
+            return jsonify({"response": "🚨 API Key-ta kaj korche na (Unauthorized). Notun key generate koro console.groq.com theke."})
+        
+        elif response.status_code == 429:
+            return jsonify({"response": "🚦 Ektu wait koro dost, Rate limit cross hoye gese. Ek minute por try koro."})
+        
         else:
-            # API theke kono error ashle oita ekhane dhora porbe
-            error_data = response.json()
-            print(f"Groq API Error: {error_data}")
-            return jsonify({"response": "Dost, API key-te ektu jhamela mone hochhe. Key-ta check koro."})
+            # Onno kono error hole oita detail e dekhabe
+            error_msg = response.json().get('error', {}).get('message', 'Unknown Error')
+            return jsonify({"response": f"❌ Groq Error: {error_msg}"})
 
     except Exception as e:
-        print(f"Server Error: {e}")
-        return jsonify({"response": "Dost, connection error! Check your internet or server."})
+        return jsonify({"response": f"⚠️ Server Error: {str(e)}"})
 
-# --- Other Routes ---
 @app.route('/font')
 def font_engine():
     return render_template('font.html')
