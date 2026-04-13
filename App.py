@@ -5,9 +5,9 @@ from flask import Flask, render_template, request, jsonify, session
 app = Flask(__name__, static_folder='static')
 app.secret_key = "anondo_secret_key_2026"
 
-# --- SambaNova API Configuration ---
-API_KEY = "Ef0cc8f3-fd4c-4158-a3ab-1229e2cd2f3e" # Tomar dewa key
-URL = "https://api.sambanova.ai/v1/chat/completions"
+# --- OpenRouter (Qwen AI) Configuration ---
+API_KEY = "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"
+URL = "https://openrouter.ai/api/v1/chat/completions"
 
 @app.route('/')
 def index():
@@ -16,7 +16,7 @@ def index():
 @app.route('/chat')
 def chat_page():
     session['chat_history'] = [
-        {"role": "system", "content": "You are Turmax AI, a friendly assistant created by Anondo Kumar Roy. Speak in natural Banglish."}
+        {"role": "system", "content": "You are Turmax AI, a smart assistant created by Anondo Kumar Roy. Speak in friendly Banglish."}
     ]
     return render_template('chat.html')
 
@@ -24,7 +24,7 @@ def chat_page():
 def chat_api():
     user_message = request.json.get("message", "")
     if not user_message:
-        return jsonify({"response": "Kisu to bolo, dost!"})
+        return jsonify({"response": "Kisu bolbe to, dost?"})
 
     if 'chat_history' not in session:
         session['chat_history'] = [{"role": "system", "content": "You are Turmax AI. Speak in Banglish."}]
@@ -32,16 +32,17 @@ def chat_api():
     history = session['chat_history']
     history.append({"role": "user", "content": user_message})
 
-    # SambaNova Payload
+    # OpenRouter Payload (Qwen 2.5 72B use kora hoyeche, eta khub powerful)
     payload = {
-        "model": "Meta-Llama-3.1-70B-Instruct", # SambaNova-r popular model
+        "model": "alibabacloud/qwen-2.5-72b-instruct", 
         "messages": history,
-        "temperature": 0.7,
-        "max_tokens": 1024
+        "temperature": 0.7
     }
     
     headers = {
         "Authorization": f"Bearer {API_KEY}",
+        "HTTP-Referer": "http://localhost:5000", # OpenRouter er jonno eta dorkar
+        "X-Title": "Turmax AI",
         "Content-Type": "application/json"
     }
     
@@ -52,7 +53,7 @@ def chat_api():
             bot_reply = response.json()["choices"][0]["message"]["content"]
             history.append({"role": "assistant", "content": bot_reply})
             
-            # History control (Memory)
+            # History control (Memory limit)
             if len(history) > 12:
                 session['chat_history'] = [history[0]] + history[-11:]
             else:
@@ -61,12 +62,12 @@ def chat_api():
             session.modified = True
             return jsonify({"response": bot_reply})
         else:
-            error_info = response.json()
-            print(f"SambaNova Error: {error_info}")
-            return jsonify({"response": f"Dost, SambaNova theke error ashche: {response.status_code}"})
+            error_data = response.json()
+            print(f"OpenRouter Error: {error_data}")
+            return jsonify({"response": f"Dost, OpenRouter error dise: {response.status_code}. Key-te balance ase to?"})
 
     except Exception as e:
-        return jsonify({"response": f"System error hoise: {str(e)}"})
+        return jsonify({"response": f"Server jhamela: {str(e)}"})
 
 # --- Other Routes ---
 @app.route('/font')
