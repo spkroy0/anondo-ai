@@ -7,7 +7,7 @@ app.secret_key = "anondo_secret_key_2026"
 
 # --- xAI (Grok) API Configuration ---
 # Note: Key ta ekhane hardcoded, kintu pore environment variable e move kora bhalo
-API_KEY = "xai-XQcI0Hb9qhup4LOQbYYZBhUpW1hrYtMumGEGgSaCBkl3iXYei7u26tA5SP7LcNF3UZEBN46QhDdijFE8"
+API_KEY = "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"
 URL = "https://api.x.ai/v1/chat/completions"
 
 @app.route('/')
