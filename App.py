@@ -5,9 +5,9 @@ from flask import Flask, render_template, request, jsonify, session
 app = Flask(__name__, static_folder='static')
 app.secret_key = "anondo_secret_key_2026"
 
-# --- xAI (Grok) API Configuration ---
-# Note: Key ta ekhane hardcoded, kintu pore environment variable e move kora bhalo
-API_KEY = "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"
+# --- Groq API Configuration ---
+# Tumi ekhon matro je key-ta dile oita ekhane boshanu hoyeche
+API_KEY = "Gsk_tOW44UqXqHS06hwLJoXeWGdyb3FYcHAd9R12GG3tgoK9etu8Y2Dq"
 URL = "https://api.groq.com/openai/v1/chat/completions"
 
 @app.route('/')
@@ -16,9 +16,8 @@ def index():
 
 @app.route('/chat')
 def chat_page():
-    # Fresh session start
     session['chat_history'] = [
-        {"role": "system", "content": "You are Turmax AI, a friendly assistant created by Anondo Kumar Roy. Speak in natural Banglish."}
+        {"role": "system", "content": "You are Turmax AI, created by Anondo Kumar Roy. Speak in friendly Banglish."}
     ]
     return render_template('chat.html')
 
@@ -27,19 +26,17 @@ def chat_api():
     user_message = request.json.get("message", "")
     
     if 'chat_history' not in session:
-        session['chat_history'] = [
-            {"role": "system", "content": "You are Turmax AI. Speak in Banglish."}
-        ]
+        session['chat_history'] = [{"role": "system", "content": "You are Turmax AI. Speak in Banglish."}]
 
     history = session['chat_history']
     history.append({"role": "user", "content": user_message})
 
-    # xAI Payload
+    # Groq er jonno payload
     payload = {
-        "model": "grok-beta",  # xAI er standard model name
+        "model": "llama-3.3-70b-versatile", # Groq-er shera model
         "messages": history,
         "temperature": 0.8,
-        "stream": False
+        "max_tokens": 1024
     }
     
     headers = {
@@ -48,44 +45,39 @@ def chat_api():
     }
     
     try:
-        response = requests.post(URL, headers=headers, json=payload, timeout=20)
+        response = requests.post(URL, headers=headers, json=payload, timeout=15)
         
-        # Check if request was successful
         if response.status_code == 200:
-            result = response.json()
-            bot_reply = result["choices"][0]["message"]["content"]
-            
-            # History update
+            bot_reply = response.json()["choices"][0]["message"]["content"]
             history.append({"role": "assistant", "content": bot_reply})
             
-            # Keep only last 10-12 messages for memory efficiency
+            # History control (memory limit)
             if len(history) > 12:
                 session['chat_history'] = [history[0]] + history[-11:]
             else:
                 session['chat_history'] = history
-                
+            
             session.modified = True
+            return jsonify({"response": bot_reply})
         else:
-            print(f"Error from xAI: {response.text}")
-            bot_reply = f"Dost, xAI theke error ashche (Status: {response.status_code}). Key ta check koro?"
+            # API theke kono error ashle oita ekhane dhora porbe
+            error_data = response.json()
+            print(f"Groq API Error: {error_data}")
+            return jsonify({"response": "Dost, API key-te ektu jhamela mone hochhe. Key-ta check koro."})
 
     except Exception as e:
-        print(f"System Error: {e}")
-        bot_reply = "Dost, ektu error hoise connection-e. Abar bolo?"
-        
-    return jsonify({"response": bot_reply})
+        print(f"Server Error: {e}")
+        return jsonify({"response": "Dost, connection error! Check your internet or server."})
 
-# --- Font Engine Route ---
+# --- Other Routes ---
 @app.route('/font')
 def font_engine():
     return render_template('font.html')
 
-# --- Python Editor Route ---
 @app.route('/py-editor')
 def py_editor():
     return render_template('editor.html')
 
 if __name__ == "__main__":
-    # Deployment support
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
