@@ -5,9 +5,10 @@ from flask import Flask, render_template, request, jsonify, session
 app = Flask(__name__, static_folder='static')
 app.secret_key = "anondo_secret_key_2026"
 
-# --- OpenRouter (Qwen AI) Configuration ---
-API_KEY = "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"
-URL = "https://openrouter.ai/api/v1/chat/completions"
+# --- Google Gemini API Configuration ---
+API_KEY = "AIzaSyBT4I0orDRN_NCFFVUhzrCK0opWFEgO5pc"
+# Gemini 1.5 Flash use kora hoyeche (Fast and Free)
+URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
 
 @app.route('/')
 def index():
@@ -15,8 +16,10 @@ def index():
 
 @app.route('/chat')
 def chat_page():
+    # Gemini uses a slightly different history structure
     session['chat_history'] = [
-        {"role": "system", "content": "You are Turmax AI, a smart assistant created by Anondo Kumar Roy. Speak in friendly Banglish."}
+        {"role": "user", "parts": [{"text": "You are Turmax AI, created by Anondo Kumar Roy. Always reply in friendly Banglish."}]},
+        {"role": "model", "parts": [{"text": "Thik ache dost! Ami Turmax AI, ready!"}]}
     ]
     return render_template('chat.html')
 
@@ -24,52 +27,53 @@ def chat_page():
 def chat_api():
     user_message = request.json.get("message", "")
     if not user_message:
-        return jsonify({"response": "Kisu bolbe to, dost?"})
+        return jsonify({"response": "Kisu bolo!"})
 
     if 'chat_history' not in session:
-        session['chat_history'] = [{"role": "system", "content": "You are Turmax AI. Speak in Banglish."}]
+        session['chat_history'] = []
 
     history = session['chat_history']
-    history.append({"role": "user", "content": user_message})
+    
+    # User message add kora
+    history.append({"role": "user", "parts": [{"text": user_message}]})
 
-    # OpenRouter Payload (Qwen 2.5 72B use kora hoyeche, eta khub powerful)
+    # Gemini Payload format
     payload = {
-        "model": "alibabacloud/qwen-2.5-72b-instruct", 
-        "messages": history,
-        "temperature": 0.7
+        "contents": history,
+        "generationConfig": {
+            "temperature": 0.8,
+            "maxOutputTokens": 1024,
+        }
     }
     
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "HTTP-Referer": "http://localhost:5000", # OpenRouter er jonno eta dorkar
-        "X-Title": "Turmax AI",
-        "Content-Type": "application/json"
-    }
+    headers = {"Content-Type": "application/json"}
     
     try:
         response = requests.post(URL, headers=headers, json=payload, timeout=20)
         
         if response.status_code == 200:
-            bot_reply = response.json()["choices"][0]["message"]["content"]
-            history.append({"role": "assistant", "content": bot_reply})
+            result = response.json()
+            # Gemini response extract kora
+            bot_reply = result['candidates'][0]['content']['parts'][0]['text']
             
-            # History control (Memory limit)
-            if len(history) > 12:
-                session['chat_history'] = [history[0]] + history[-11:]
+            # History update
+            history.append({"role": "model", "parts": [{"text": bot_reply}]})
+            
+            # Control history size (Gemini context window boro, but session optimized rakha bhalo)
+            if len(history) > 15:
+                session['chat_history'] = history[-15:]
             else:
                 session['chat_history'] = history
                 
             session.modified = True
             return jsonify({"response": bot_reply})
         else:
-            error_data = response.json()
-            print(f"OpenRouter Error: {error_data}")
-            return jsonify({"response": f"Dost, OpenRouter error dise: {response.status_code}. Key-te balance ase to?"})
+            print(f"Gemini Error: {response.text}")
+            return jsonify({"response": f"Dost, Google AI error dise: {response.status_code}. Key block hole notun key generate koro."})
 
     except Exception as e:
-        return jsonify({"response": f"Server jhamela: {str(e)}"})
+        return jsonify({"response": f"System error: {str(e)}"})
 
-# --- Other Routes ---
 @app.route('/font')
 def font_engine():
     return render_template('font.html')
